@@ -51,6 +51,7 @@ export type Coord = [number, number];
 export const developmentScript = `
 function main(gameState, side) {
     const myTeam = gameState.teamStates[side];
+    
     return ['none', 'none', 'none'];
   }
 `;
