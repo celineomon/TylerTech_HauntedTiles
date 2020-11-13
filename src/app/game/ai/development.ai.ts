@@ -104,27 +104,58 @@ function main(gameState, side) {
 					const w_weight = col - 1 >= 0 ? aggBoard[row][col - 1] : 0
 					const e_weight = col + 1 <= 6 ? aggBoard[row][col + 1] : 0
 					const i_weight = aggBoard[row][col]
-
-					let move
-					let weights = {}
+					
+					console.log(possibleMoves)
+					let move = 'none'
+					let weight = 0
+					let chance
 					if(possibleMoves.length == 0) possibleMoves.push('none');
 					else {
 						for( let i = 0; i < possibleMoves.length; i++) {
 							switch(possibleMoves[i]) {
 								case 'north': {
-									weights['north'] = n_weight
+									if( weight < n_weight ) {
+										move =  'north'
+										weight = n_weight
+									} else if ( weight == n_weight ) {
+										chance = Math.random() >= 0.5 ? 1 : 0
+										move =  chance ? 'north' : move
+										weight = chance ?  n_weight : weight
+									}
 									break;
 								}
 								case 'south': {
-									weights['south'] = s_weight
+									if( weight < s_weight ) {
+										move = 'south'
+										weight = s_weight
+
+									} else if ( weight == s_weight ) {
+										chance = Math.random() >= 0.5 ? 1 : 0
+										move =  chance ? 'south' : move
+										weight = chance ?  s_weight : weight
+									}
 									break;
 								}
 								case 'west': {
-									weights['west'] = w_weight
+									if( weight < w_weight ) {
+										move = 'west'
+										weight = w_weight
+									} else if ( weight == w_weight ) {
+										chance = Math.random() >= 0.5 ? 1 : 0
+										move =  chance ? 'west' : move
+										weight = chance ?  w_weight : weight
+									}
 									break;
 								}
 								case 'east': {
-									weights['east'] = w_weight
+									if( weight < e_weight ) {
+										move = 'east'
+										weight = e_weight
+									} else if ( weight == e_weight ) {
+										chance = Math.random() >= 0.5 ? 1 : 0
+										move =  chance ? 'east' : move
+										weight = chance ?  e_weight : weight
+									}
 									break;
 								}
 								default: {
