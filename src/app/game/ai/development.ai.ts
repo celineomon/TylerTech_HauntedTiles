@@ -13,6 +13,7 @@ Take a look at other example scripts to get some ideas on how to leverage this d
 // do not include "export const developmentScript = " with your submission
 export const developmentScript = `
 let board = [];
+let aggBoard = [];
 let turn = -1;
 let prevOtherMoves = [];
 let otherMoves = [];
@@ -29,19 +30,25 @@ function main(gameState, side) {
 	if (turn === 0) {
 		for(let i = 0; i < rowSize; i++) {
 			board.push([]);
+			aggBoard.push([])
 			for(let j = 0; j < colSize; j++) {
 				if(gameState.tileStates[i][j] == 0) {
 					board[i].push(0);
 				} else {
 					board[i].push(3);
 				}
+				const n = i - 1 >= 0 ? gameState.tileStates[i - 1][j]: 0
+				const s = i + 1 <= 6 ? gameState.tileStates[i + 1][j]: 0
+				const w = j - 1 >= 0 ? gameState.tileStates[i][j - 1]: 0
+				const e = j + 1 <= 6 ? gameState.tileStates[i][j + 1]: 0
+				aggBoard[i].push(n + s + w + e)
 			}
 		}
 		for(let i = 0; i < myTeam.length; i++) {
 			curMoves.push(myTeam[i].coord);
 			// console.log(curMoves[i])
 		}
-		// console.log(board)
+		console.log(aggBoard)
 	}
 
 	console.log('turn', turn);
@@ -85,24 +92,54 @@ function main(gameState, side) {
 					const westExist  = board[row][col - 1 > 0 ? col - 1 : 0] > 1;
 					const eastExist  = board[row][col + 1 < 6 ? col + 1 : 6] > 1;
 					const idleExist  = board[row][col] > 2;
-					console.log('N', canNorth, 'S', canSouth, 'W', canWest, 'E', canEast);
-					console.log('N', northExist, 'S', southExist, 'W', westExist, 'E', eastExist);
-					console.log(
-					  'N', board[row - 1 >= 0 ? row - 1 : 0][col],
-					  'S', board[row + 1 <= 6 ? row + 1 : 6][col],
-					  'W', board[row][col - 1 >= 0 ? col - 1 : 0],
-					  'E', board[row][col + 1 <= 6 ? col + 1 : 6],
-					);
-
+					
 					if (canNorth && northExist) possibleMoves.push('north');
 					if (canSouth && southExist)  possibleMoves.push('south');
 					if (canWest && westExist) possibleMoves.push('west');
 					if (canEast && eastExist)  possibleMoves.push('east');
 					if (idleExist) possibleMoves.push('none');
 					
+					const n_weight = row - 1 >= 0 ? aggBoard[row - 1][col] : 0
+					const s_weight = row + 1 <= 6 ? aggBoard[row + 1][col] : 0
+					const w_weight = col - 1 >= 0 ? aggBoard[row][col - 1] : 0
+					const e_weight = col + 1 <= 6 ? aggBoard[row][col + 1] : 0
+					const i_weight = aggBoard[row][col]
+					let move
+					let weight
 					if(possibleMoves.length == 0) possibleMoves.push('none');
-					const move = possibleMoves[Math.floor(Math.random() * possibleMoves.length)];
-					console.log(move, possibleMoves)
+					else {
+						move = possibleMoves[0]
+						weight = 0
+						for( let i = 0; i < possibleMoves.length; i++) {
+							switch(possibleMoves[i]) {
+								case 'north': {
+									move = weight < n_weight ? 'north' : move
+									weight = weight < n_weight ? n_weight : weight
+									break;
+								}
+								case 'south': {
+									move = weight < s_weight ? 'south' : move
+									weight = weight < s_weight ? s_weight : weight
+									break;
+								}
+								case 'west': {
+									move = weight < w_weight ? 'west' : move
+									weight = weight < w_weight ? w_weight : weight
+									break;
+								}
+								case 'east': {
+									move = weight < e_weight ? 'east' : move
+									weight = weight < e_weight ? e_weight : weight
+									break;
+								}
+								default: {
+									break;
+								}
+							}
+						}
+					}
+					// const move = possibleMoves[Math.floor(Math.random() * possibleMoves.length)];
+					// console.log(move, possibleMoves)
 
 					let newRow = row, newCol = col;
 					switch(move) {
@@ -126,17 +163,17 @@ function main(gameState, side) {
 							break;
 						}
 					}
-					// if (move !== 'none') {
-						console.log('moved', move, row + '->' + newRow, col + '->' + newCol, board[newRow][newCol]);
-						board[newRow][newCol]--;
-						curMoves[i] = [newRow, newCol];
-					// }
+					console.log('moved', move, row + '->' + newRow, col + '->' + newCol, board[newRow][newCol]);
+					board[newRow][newCol]--;
+
+					newRow - 1 >= 0 ? aggBoard[newRow - 1][newCol]-- : 0
+					newRow + 1 <= 6 ? aggBoard[newRow + 1][newCol]-- : 0
+					newCol - 1 >= 0 ? aggBoard[newRow][newCol - 1]-- : 0
+					newCol + 1 <= 6 ? aggBoard[newRow][newCol + 1]-- : 0
+					aggBoard[newRow][newCol]--
+
+					curMoves[i] = [newRow, newCol];
 					moveSet.push(move);
-					// console.log('row 0', board[0]);
-					// console.log('row 1', board[1]);
-					// console.log('row 2', board[2]);
-					// console.log('row 3', board[3]);
-					// console.log('row 4', board[4]);
 					possibleMoves.length = 0;
 				}
 				return moveSet;
