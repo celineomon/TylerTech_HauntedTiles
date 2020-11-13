@@ -104,32 +104,27 @@ function main(gameState, side) {
 					const w_weight = col - 1 >= 0 ? aggBoard[row][col - 1] : 0
 					const e_weight = col + 1 <= 6 ? aggBoard[row][col + 1] : 0
 					const i_weight = aggBoard[row][col]
+
 					let move
-					let weight
+					let weights = {}
 					if(possibleMoves.length == 0) possibleMoves.push('none');
 					else {
-						move = possibleMoves[0]
-						weight = 0
 						for( let i = 0; i < possibleMoves.length; i++) {
 							switch(possibleMoves[i]) {
 								case 'north': {
-									move = weight < n_weight ? 'north' : move
-									weight = weight < n_weight ? n_weight : weight
+									weights['north'] = n_weight
 									break;
 								}
 								case 'south': {
-									move = weight < s_weight ? 'south' : move
-									weight = weight < s_weight ? s_weight : weight
+									weights['south'] = s_weight
 									break;
 								}
 								case 'west': {
-									move = weight < w_weight ? 'west' : move
-									weight = weight < w_weight ? w_weight : weight
+									weights['west'] = w_weight
 									break;
 								}
 								case 'east': {
-									move = weight < e_weight ? 'east' : move
-									weight = weight < e_weight ? e_weight : weight
+									weights['east'] = w_weight
 									break;
 								}
 								default: {
