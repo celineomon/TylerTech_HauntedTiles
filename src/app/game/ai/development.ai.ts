@@ -41,7 +41,6 @@ function main(gameState, side) {
 			curMoves.push(myTeam[i].coord);
 			// console.log(curMoves[i])
 		}
-		// console.log(board)
 	}
 
 	console.log('turn', turn);
@@ -85,14 +84,6 @@ function main(gameState, side) {
 					const westExist  = board[row][col - 1 > 0 ? col - 1 : 0] > 1;
 					const eastExist  = board[row][col + 1 < 6 ? col + 1 : 6] > 1;
 					const idleExist  = board[row][col] > 2;
-					// console.log('N', canNorth, 'S', canSouth, 'W', canWest, 'E', canEast);
-					// console.log('N', northExist, 'S', southExist, 'W', westExist, 'E', eastExist);
-					// console.log(
-					//   'N', board[row - 1 >= 0 ? row - 1 : 0][col],
-					//   'S', board[row + 1 <= 6 ? row + 1 : 6][col],
-					//   'W', board[row][col - 1 >= 0 ? col - 1 : 0],
-					//   'E', board[row][col + 1 <= 6 ? col + 1 : 6],
-					// );
 
 					if (canNorth && northExist) possibleMoves.push('north');
 					if (canSouth && southExist)  possibleMoves.push('south');
@@ -128,6 +119,7 @@ function main(gameState, side) {
 					}
 					console.log('moved', move, row + '->' + newRow, col + '->' + newCol, board[newRow][newCol]);
 					board[newRow][newCol]--;
+
 					curMoves[i] = [newRow, newCol];
 					moveSet.push(move);
 					possibleMoves.length = 0;
@@ -138,4 +130,4 @@ function main(gameState, side) {
 		return callback();
 		})
 }
-`;
+`
